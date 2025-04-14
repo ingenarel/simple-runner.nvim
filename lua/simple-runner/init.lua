@@ -1,56 +1,58 @@
-return {
-	function()
-		local current_filetype = vim.bo.filetype
+local m = {}
 
-		local function floating_terminal(title, stuff)
-			vim.cmd(
-				"FloatermNew --width=1.0 --height=0.95 --title="
-					.. title
-					.. " --titleposition=center --autoclose=0 "
-					.. stuff
-			)
-		end
+function m.run()
+	local current_filetype = vim.bo.filetype
 
-		vim.cmd("w")
+	local function floating_terminal(title, stuff)
+		vim.cmd(
+			"FloatermNew --width=1.0 --height=0.95 --title="
+				.. title
+				.. " --titleposition=center --autoclose=0 "
+				.. stuff
+		)
+	end
 
-		local file_with_extension = vim.fn.expand("%:p")
-		local file_without_extension = vim.fn.fnamemodify(file_with_extension, ":r")
+	vim.cmd("w")
 
-		local function execute_with(title, program)
-			floating_terminal(title, program .. ' "' .. file_with_extension .. '"')
-		end
+	local file_with_extension = vim.fn.expand("%:p")
+	local file_without_extension = vim.fn.fnamemodify(file_with_extension, ":r")
 
-		if current_filetype == "python" then
-			execute_with(current_filetype, current_filetype)
-		elseif current_filetype == "sh" then
-			floating_terminal(current_filetype, file_with_extension)
-		elseif current_filetype == "c" then
-			-- if using windows, make sure you set your CC variable
-			-- i set it to `gcc -Wall -Wextra`
-			-- local linuxbin = "./"
-			-- if vim.fn.has("win32") == 1 then
-			--     linuxbin = ""
-			-- end
-			floating_terminal(
-				current_filetype,
-				-- 'make "' .. file_without_extension .. '" && ' .. linuxbin .. '"' .. file_without_extension .. '"'
-				'make "'
-					.. file_without_extension
-					.. '" && '
-					.. '"'
-					.. file_without_extension
-					.. '"'
-			)
-		elseif current_filetype == "lua" then
-			execute_with(current_filetype, current_filetype)
-		elseif current_filetype == "dosbatch" then
-			floating_terminal("batch", "cmd /c % && exit")
-		elseif current_filetype == "ps1" then
-			execute_with("powershell", "powershell -File ")
-		elseif current_filetype == "html" then -- change it to your browser, make sure the browser is on the path
-			vim.cmd('!librewolf "' .. file_with_extension .. '"')
-		else
-			vim.notify("Filetype hasn't been implemented yet", "WARN")
-		end
-	end,
-}
+	local function execute_with(title, program)
+		floating_terminal(title, program .. ' "' .. file_with_extension .. '"')
+	end
+
+	if current_filetype == "python" then
+		execute_with(current_filetype, current_filetype)
+	elseif current_filetype == "sh" then
+		floating_terminal(current_filetype, file_with_extension)
+	elseif current_filetype == "c" then
+		-- if using windows, make sure you set your CC variable
+		-- i set it to `gcc -Wall -Wextra`
+		-- local linuxbin = "./"
+		-- if vim.fn.has("win32") == 1 then
+		--     linuxbin = ""
+		-- end
+		floating_terminal(
+			current_filetype,
+			-- 'make "' .. file_without_extension .. '" && ' .. linuxbin .. '"' .. file_without_extension .. '"'
+			'make "'
+				.. file_without_extension
+				.. '" && '
+				.. '"'
+				.. file_without_extension
+				.. '"'
+		)
+	elseif current_filetype == "lua" then
+		execute_with(current_filetype, current_filetype)
+	elseif current_filetype == "dosbatch" then
+		floating_terminal("batch", "cmd /c % && exit")
+	elseif current_filetype == "ps1" then
+		execute_with("powershell", "powershell -File ")
+	elseif current_filetype == "html" then -- change it to your browser, make sure the browser is on the path
+		vim.cmd('!librewolf "' .. file_with_extension .. '"')
+	else
+		vim.notify("Filetype hasn't been implemented yet", "WARN")
+	end
+end
+
+return m
