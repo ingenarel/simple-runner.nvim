@@ -1,58 +1,71 @@
 local m = {}
 
-function m.run()
-	local current_filetype = vim.bo.filetype
+function m.openFloatingTerm(command)
+	---@type integer
+	local win_width = math.floor(vim.o.columns / 100 * m.widthPercentage)
+	---@type integer
+	local win_height = math.floor(vim.o.lines / 100 * m.heightPercentage)
+	---@type integer
+	local bufID = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_open_win(bufID, true, {
+		relative = "editor",
+		width = win_width,
+		height = win_height,
+		col = math.floor((vim.o.columns - win_width - 2) / 2),
+		row = math.floor((vim.o.lines - win_height - 2) / 2),
+		border = "rounded",
+		style = "minimal",
+	})
+	vim.cmd.term(command)
+end
 
-	local function floating_terminal(title, stuff)
-		vim.cmd(
-			"FloatermNew --width=1.0 --height=0.95 --title="
-				.. title
-				.. " --titleposition=center --autoclose=0 "
-				.. stuff
-		)
+function m.setup(opts)
+	m.heightPercentage = opts.heightPercentage
+	m.widthPercentage = opts.widthPercentage
+	m.browser = opts.browser
+
+	if m.heightPercentage == nil then
+		m.heightPercentage = 70
 	end
+	if m.widthPercentage == nil then
+		m.widthPercentage = 80
+	end
+
+	-- TODO: make a function for autoselecting the browser
+end
+
+function m.run()
+	local currentFiletype = vim.bo.filetype
 
 	vim.cmd("w")
 
-	local file_with_extension = vim.fn.expand("%:p")
-	local file_without_extension = vim.fn.fnamemodify(file_with_extension, ":r")
+	local fileWithExtension = vim.fn.expand("%:p")
+	local fileWithoutExtension = vim.fn.fnamemodify(fileWithExtension, ":r")
 
-	local function execute_with(title, program)
-		floating_terminal(title, program .. ' "' .. file_with_extension .. '"')
-	end
-
-	if current_filetype == "python" then
-		execute_with(current_filetype, current_filetype)
-	elseif current_filetype == "sh" then
-		floating_terminal(current_filetype, file_with_extension)
-	elseif current_filetype == "c" then
-		-- if using windows, make sure you set your CC variable
-		-- i set it to `gcc -Wall -Wextra`
-		-- local linuxbin = "./"
-		-- if vim.fn.has("win32") == 1 then
-		--     linuxbin = ""
-		-- end
-		floating_terminal(
-			current_filetype,
-			-- 'make "' .. file_without_extension .. '" && ' .. linuxbin .. '"' .. file_without_extension .. '"'
-			'make "'
-				.. file_without_extension
-				.. '" && '
-				.. '"'
-				.. file_without_extension
-				.. '"'
-		)
-	elseif current_filetype == "lua" then
-		execute_with(current_filetype, current_filetype)
-	elseif current_filetype == "dosbatch" then
-		floating_terminal("batch", "cmd /c % && exit")
-	elseif current_filetype == "ps1" then
-		execute_with("powershell", "powershell -File ")
-	elseif current_filetype == "html" then -- change it to your browser, make sure the browser is on the path
-		vim.cmd('!librewolf "' .. file_with_extension .. '"')
-	else
-		vim.notify("Filetype hasn't been implemented yet", "WARN")
-	end
+	local execute = {
+		python = function()
+			m.openFloatingTerm('python "' .. fileWithExtension .. '"')
+		end,
+		sh = function()
+			m.openFloatingTerm('"' .. fileWithExtension .. '"')
+		end,
+		c = function()
+			m.openFloatingTerm('make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"')
+		end,
+		lua = function()
+			m.openFloatingTerm('luajit "' .. fileWithExtension .. '"')
+		end,
+		dosbatch = function()
+			m.openFloatingTerm('cmd /c "' .. fileWithExtension .. '" && exit')
+		end,
+		ps1 = function()
+			m.openFloatingTerm('powershell -File "' .. fileWithExtension .. '"')
+		end,
+		html = function()
+			vim.system({ m.browser, fileWithExtension })
+		end,
+	}
+	execute[currentFiletype]()
 end
 
 return m
