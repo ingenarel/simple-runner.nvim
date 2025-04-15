@@ -15,34 +15,39 @@ function m.setup(opts)
 	-- TODO: make a function for autoselecting the browser
 end
 
-function m.run()
+function m.run(closeOnExit)
 	local currentFiletype = vim.bo.filetype
 
 	vim.cmd("w")
+
+	if closeOnExit == nil then
+		closeOnExit = false
+	end
 
 	local fileWithExtension = vim.fn.expand("%:p")
 	local fileWithoutExtension = vim.fn.fnamemodify(fileWithExtension, ":r")
 
 	local execute = {
 		python = function()
-			require("smart-floatterm").open('python "' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('python "' .. fileWithExtension .. '"', closeOnExit)
 		end,
 		sh = function()
-			require("smart-floatterm").open('"' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('"' .. fileWithExtension .. '"', closeOnExit)
 		end,
 		c = function()
 			require("smart-floatterm").open(
-				'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"'
+				'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"',
+				closeOnExit
 			)
 		end,
 		lua = function()
-			require("smart-floatterm").open('luajit "' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('luajit "' .. fileWithExtension .. '"', closeOnExit)
 		end,
 		dosbatch = function()
-			require("smart-floatterm").open('cmd /c "' .. fileWithExtension .. '" && exit')
+			require("smart-floatterm").open('cmd /c "' .. fileWithExtension .. '" && exit', closeOnExit)
 		end,
 		ps1 = function()
-			require("smart-floatterm").open('powershell -File "' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('powershell -File "' .. fileWithExtension .. '"', closeOnExit)
 		end,
 		html = function()
 			vim.system({ m.browser, fileWithExtension })
