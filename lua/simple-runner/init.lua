@@ -1,18 +1,9 @@
 local m = {}
 
 function m.setup(opts)
-	m.heightPercentage = opts.heightPercentage
-	m.widthPercentage = opts.widthPercentage
+	m.heightPercentage = opts.heightPercentage or 70
+	m.widthPercentage = opts.widthPercentage or 80
 	m.browser = opts.browser
-
-	if m.heightPercentage == nil then
-		m.heightPercentage = 70
-	end
-	if m.widthPercentage == nil then
-		m.widthPercentage = 80
-	end
-
-	-- TODO: make a function for autoselecting the browser
 end
 
 function m.run(closeOnExit)
