@@ -1,24 +1,5 @@
 local m = {}
 
-function m.openFloatingTerm(command)
-	---@type integer
-	local win_width = math.floor(vim.o.columns / 100 * m.widthPercentage)
-	---@type integer
-	local win_height = math.floor(vim.o.lines / 100 * m.heightPercentage)
-	---@type integer
-	local bufID = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_open_win(bufID, true, {
-		relative = "editor",
-		width = win_width,
-		height = win_height,
-		col = math.floor((vim.o.columns - win_width - 2) / 2),
-		row = math.floor((vim.o.lines - win_height - 2) / 2),
-		border = "rounded",
-		style = "minimal",
-	})
-	vim.cmd.term(command)
-end
-
 function m.setup(opts)
 	m.heightPercentage = opts.heightPercentage
 	m.widthPercentage = opts.widthPercentage
@@ -44,22 +25,24 @@ function m.run()
 
 	local execute = {
 		python = function()
-			m.openFloatingTerm('python "' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('python "' .. fileWithExtension .. '"')
 		end,
 		sh = function()
-			m.openFloatingTerm('"' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('"' .. fileWithExtension .. '"')
 		end,
 		c = function()
-			m.openFloatingTerm('make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"')
+			require("smart-floatterm").open(
+				'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"'
+			)
 		end,
 		lua = function()
-			m.openFloatingTerm('luajit "' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('luajit "' .. fileWithExtension .. '"')
 		end,
 		dosbatch = function()
-			m.openFloatingTerm('cmd /c "' .. fileWithExtension .. '" && exit')
+			require("smart-floatterm").open('cmd /c "' .. fileWithExtension .. '" && exit')
 		end,
 		ps1 = function()
-			m.openFloatingTerm('powershell -File "' .. fileWithExtension .. '"')
+			require("smart-floatterm").open('powershell -File "' .. fileWithExtension .. '"')
 		end,
 		html = function()
 			vim.system({ m.browser, fileWithExtension })
