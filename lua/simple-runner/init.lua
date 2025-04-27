@@ -20,25 +20,25 @@ function m.run(closeOnExit)
 
     local execute = {
         python = function()
-            require("smart-floatterm").open('python "' .. fileWithExtension .. '"', closeOnExit)
+            require("smart-floatterm").open { 'python "' .. fileWithExtension .. '"', closeOnExit = closeOnExit }
         end,
         sh = function()
-            require("smart-floatterm").open('"' .. fileWithExtension .. '"', closeOnExit)
+            require("smart-floatterm").open { '"' .. fileWithExtension .. '"', closeOnExit = closeOnExit }
         end,
         c = function()
-            require("smart-floatterm").open(
+            require("smart-floatterm").open {
                 'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"',
-                closeOnExit
-            )
+                closeOnExit = closeOnExit,
+            }
         end,
         lua = function()
-            require("smart-floatterm").open('luajit "' .. fileWithExtension .. '"', closeOnExit)
+            require("smart-floatterm").open { 'luajit "' .. fileWithExtension .. '"', closeOnExit = closeOnExit }
         end,
         dosbatch = function()
-            require("smart-floatterm").open('cmd /c "' .. fileWithExtension .. '" && exit', closeOnExit)
+            require("smart-floatterm").open { 'cmd /c "' .. fileWithExtension .. '" && exit', closeOnExit = closeOnExit }
         end,
         ps1 = function()
-            require("smart-floatterm").open('powershell -File "' .. fileWithExtension .. '"', closeOnExit)
+            require("smart-floatterm").open { 'powershell -File "' .. fileWithExtension .. '"', closeOnExit = closeOnExit }
         end,
         html = function()
             vim.system { m.browser, fileWithExtension }
