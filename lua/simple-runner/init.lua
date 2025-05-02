@@ -21,28 +21,28 @@ function m.run(opts)
 
     local execute = {
         python = function()
-            require("smart-floatterm").open { 'python "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            require("smart-term").openFloaTerm { 'python "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         sh = function()
-            require("smart-floatterm").open { '"' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            require("smart-term").openFloaTerm { '"' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         c = function()
-            require("smart-floatterm").open {
+            require("smart-term").openFloaTerm {
                 'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"',
                 closeOnExit = opts.closeOnExit,
             }
         end,
         lua = function()
-            require("smart-floatterm").open { 'luajit "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            require("smart-term").openFloaTerm { 'luajit "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         dosbatch = function()
-            require("smart-floatterm").open {
+            require("smart-term").openFloaTerm {
                 'cmd /c "' .. fileWithExtension .. '" && exit',
                 closeOnExit = opts.closeOnExit,
             }
         end,
         ps1 = function()
-            require("smart-floatterm").open {
+            require("smart-term").openFloaTerm {
                 'powershell -File "' .. fileWithExtension .. '"',
                 closeOnExit = opts.closeOnExit,
             }
