@@ -24,6 +24,9 @@ function m.run(opts)
             require("smart-term").openFloaTerm { 'python "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         sh = function()
+            if not string.find(vim.fn.getfperm(fileWithExtension), "x") then
+                vim.system({ "chmod", "u+x", fileWithExtension }):wait()
+            end
             require("smart-term").openFloaTerm { '"' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         c = function()
