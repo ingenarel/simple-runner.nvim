@@ -21,31 +21,31 @@ function m.run(opts)
 
     local execute = {
         python = function()
-            require("smart-term").openFloaTerm { 'python "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            require("smart-term").float { 'python "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         sh = function()
             if not string.find(vim.fn.getfperm(fileWithExtension), "x") then
                 vim.system({ "chmod", "u+x", fileWithExtension }):wait()
             end
-            require("smart-term").openFloaTerm { '"' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            require("smart-term").float { '"' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         c = function()
-            require("smart-term").openFloaTerm {
+            require("smart-term").float {
                 'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"',
                 closeOnExit = opts.closeOnExit,
             }
         end,
         lua = function()
-            require("smart-term").openFloaTerm { 'luajit "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            require("smart-term").float { 'luajit "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
         end,
         dosbatch = function()
-            require("smart-term").openFloaTerm {
+            require("smart-term").float {
                 'cmd /c "' .. fileWithExtension .. '" && exit',
                 closeOnExit = opts.closeOnExit,
             }
         end,
         ps1 = function()
-            require("smart-term").openFloaTerm {
+            require("smart-term").float {
                 'powershell -File "' .. fileWithExtension .. '"',
                 closeOnExit = opts.closeOnExit,
             }
@@ -54,7 +54,7 @@ function m.run(opts)
             vim.system { m.browser, fileWithExtension }
         end,
         rust = function()
-            require("smart-term").openFloaTerm { "cargo run", closeOnExit = opts.closeOnExit }
+            require("smart-term").float { "cargo run", closeOnExit = opts.closeOnExit }
         end,
     }
     execute[currentFiletype]()
