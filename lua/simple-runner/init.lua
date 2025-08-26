@@ -53,6 +53,9 @@ function m.run(opts)
         html = function()
             vim.system { m.browser, fileWithExtension }
         end,
+        rust = function()
+            require("smart-term").openFloaTerm { "cargo run", closeOnExit = opts.closeOnExit }
+        end,
     }
     execute[currentFiletype]()
 end
