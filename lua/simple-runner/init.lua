@@ -21,43 +21,43 @@ function m.run(opts)
 
     local execute = {
         python = function()
-            require("smart-term").float { 'python "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            table.insert(opts, 'python "' .. fileWithExtension .. '"')
+            return true
         end,
         sh = function()
             if not string.find(vim.fn.getfperm(fileWithExtension), "x") then
                 vim.system({ "chmod", "u+x", fileWithExtension }):wait()
             end
-            require("smart-term").float { '"' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            table.insert(opts, '"' .. fileWithExtension .. '"')
+            return true
         end,
         c = function()
-            require("smart-term").float {
-                'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"',
-                closeOnExit = opts.closeOnExit,
-            }
+            table.insert(opts, 'make "' .. fileWithoutExtension .. '" && ' .. '"' .. fileWithoutExtension .. '"')
+            return true
         end,
         lua = function()
-            require("smart-term").float { 'luajit "' .. fileWithExtension .. '"', closeOnExit = opts.closeOnExit }
+            table.insert(opts, 'luajit "' .. fileWithExtension .. '"')
+            return true
         end,
         dosbatch = function()
-            require("smart-term").float {
-                'cmd /c "' .. fileWithExtension .. '" && exit',
-                closeOnExit = opts.closeOnExit,
-            }
+            table.insert(opts, 'cmd /c "' .. fileWithExtension .. '" && exit')
+            return true
         end,
         ps1 = function()
-            require("smart-term").float {
-                'powershell -File "' .. fileWithExtension .. '"',
-                closeOnExit = opts.closeOnExit,
-            }
+            table.insert(opts, 'powershell -File "' .. fileWithExtension .. '"')
+            return true
         end,
         html = function()
             vim.system { m.browser, fileWithExtension }
         end,
         rust = function()
-            require("smart-term").float { "cargo run", closeOnExit = opts.closeOnExit }
+            table.insert(opts, "cargo run")
+            return true
         end,
     }
-    execute[currentFiletype]()
+    if execute[currentFiletype]() then
+        require("smart-term").open(opts)
+    end
 end
 
 return m
